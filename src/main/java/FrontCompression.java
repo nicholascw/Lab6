@@ -1,3 +1,6 @@
+// CHECKSTYLE:OFF: MagicNumber
+// CHECKSTYLE:OFF: AvoidInlineConditions
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URI;
@@ -39,13 +42,15 @@ public class FrontCompression {
             return null;
         } else if (corpus.length() == 0) {
             return "";
+        } else {
+            String[] wordList = corpus.split("\n");
+            String returnResult = "0-" + wordList[0] + "\n";
+            for (int i = 1; i < wordList.length; i++) {
+                int lenPrefix = longestPrefix(wordList[i - 1], wordList[i]);
+                returnResult += lenPrefix + "-" + wordList[i].substring(lenPrefix) + "\n";
+            }
+            return returnResult;
         }
-
-        /*
-         * Complete this function.
-         */
-
-        return "";
     }
 
     /**
@@ -63,12 +68,19 @@ public class FrontCompression {
         } else if (corpus.length() == 0) {
             return "";
         }
-
-        /*
-         * Complete this function.
-         */
-
-        return "";
+        String[] lnTxt = corpus.split("\n");
+        String[] rResult = new String[lnTxt.length];
+        rResult[0] = lnTxt[0].substring(2);
+        for (int i = 1; i < lnTxt.length; i++) {
+            int lenPrefix = Integer.parseInt(lnTxt[i].substring(0, lnTxt[i].indexOf('-')));
+            rResult[i] = (lenPrefix > 0 ? rResult[i - 1].substring(0, lenPrefix) : "")
+                    + lnTxt[i].substring(lnTxt[i].indexOf('-') + 1);
+        }
+        String finalReturn = "";
+        for (int i = 0; i < rResult.length; i++) {
+            finalReturn += (rResult[i] + "\n");
+        }
+        return finalReturn;
     }
 
     /**
@@ -79,10 +91,16 @@ public class FrontCompression {
      * @return the length of the common prefix between the two strings
      */
     private static int longestPrefix(final String firstString, final String secondString) {
-        /*
-         * Complete this function.
-         */
-        return 0;
+        int shorterLength = (firstString.length() < secondString.length()
+                ? firstString.length()
+                : secondString.length());
+        int i = 0;
+        for (i = 0; i < shorterLength; i++) {
+            if (firstString.charAt(i) != secondString.charAt(i)) {
+                break;
+            }
+        }
+        return i;
     }
 
     /**
